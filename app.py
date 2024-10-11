@@ -82,11 +82,12 @@ def process_data(handles):
                 user_rank = user_info_dict[handle]['rank']
                 user_color = rank_colors[user_rank.lower()]
                 print(user_color)
+
                 data.append({
                     "user": handle,
                     "color": user_color,  # 使用用户的颜色
                     "days": days,
-                    "lastUpdate": now.isoformat()  # 使用CST时间
+                    "lastUpdate": datetime.now().isoformat()
                 })
     # 按 days 之和排序
     data.sort(key=lambda x: sum(x['days']), reverse=True)
