@@ -82,12 +82,12 @@
 /* 深色模式样式 */
 @media (prefers-color-scheme: dark) {
     body {
-        background-color: #333;
+        background-color: #000;
         color: #fff;
     }
 
     #heatmap-container {
-        background-color: #333;
+        background-color: #000;
     }
 
     .cell {
