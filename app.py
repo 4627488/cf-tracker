@@ -1,3 +1,5 @@
+import pytz
+from datetime import datetime
 from flask import Flask, jsonify, render_template
 import requests
 from datetime import datetime, timedelta
@@ -9,7 +11,7 @@ app = Flask(__name__)
 
 CODEFORCES_API_URL = "https://codeforces.com/api/user.status?handle={}&from=1&count=1000"
 CODEFORCES_USER_INFO_URL = "https://codeforces.com/api/user.info?handles={}"
-rank_colors = { # Codeforces 用户等级对应的颜色
+rank_colors = {  # Codeforces 用户等级对应的颜色
     "newbie": "#808080",
     "pupil":  "#008000",
     "specialist": "#03a89e",
@@ -29,17 +31,21 @@ data_cache = {
 }
 
 # 从 YAML 文件中读取 handles
+
+
 def load_handles_from_yaml(file_path):
     with open(file_path, 'r', encoding='utf-8') as file:
         config = yaml.safe_load(file)
         return config['handles'] + config['unofficial'], config['unofficial']
-    
+
+
 def fetch_codeforces_data(handle):
     response = requests.get(CODEFORCES_API_URL.format(handle))
     if response.status_code == 200:
         return response.json()
     else:
         return None
+
 
 def fetch_user_info(handles):
     response = requests.get(CODEFORCES_USER_INFO_URL.format(';'.join(handles)))
@@ -48,8 +54,6 @@ def fetch_user_info(handles):
     else:
         return None
 
-import pytz
-from datetime import datetime
 
 def process_data(handles):
     global rank_colors
@@ -63,13 +67,16 @@ def process_data(handles):
             if user_data and user_data['status'] == 'OK':
                 submissions = user_data['result']
                 days = [0] * 30
-                now = datetime.now(pytz.timezone('Asia/Shanghai'))  # 当前时间转换为CST
+                now = datetime.now(pytz.timezone(
+                    'Asia/Shanghai'))  # 当前时间转换为CST
                 # 更改now为今天的23:59:59
                 now = now.replace(hour=23, minute=59, second=59, microsecond=0)
                 for submission in submissions:
                     if submission['verdict'] != 'OK':
                         continue
-                    submission_time = datetime.fromtimestamp(submission['creationTimeSeconds'], pytz.timezone('Asia/Shanghai'))  # 提交时间转换为CST
+                    submission_time = datetime.fromtimestamp(
+                        # 提交时间转换为CST
+                        submission['creationTimeSeconds'], pytz.timezone('Asia/Shanghai'))
                     if (now - submission_time).days < 30:
                         days[(now - submission_time).days] += 1
                 user_rank = user_info_dict[handle]['rank']
@@ -89,6 +96,7 @@ def process_data(handles):
             data[i]['user'] += ' ⭐'
     return data
 
+
 def update_user_data():
     global data_cache, handles, unofficial
     while True:
@@ -103,6 +111,7 @@ def update_user_data():
             print("Error updating data:", e)
         time.sleep(60*10)  # 每隔1分钟更新一次
 
+
 @app.route('/api/user-data', methods=['GET'])
 def get_user_data():
     try:
@@ -110,9 +119,11 @@ def get_user_data():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
 @app.route('/')
 def index():
     return render_template('index.html')
+
 
 if __name__ == '__main__':
     global handles, unofficial
@@ -122,5 +133,5 @@ if __name__ == '__main__':
     update_thread = threading.Thread(target=update_user_data)
     update_thread.daemon = True
     update_thread.start()
-    
-    app.run(debug=False,port=5000)
+
+    app.run(debug=False, port=5000)
