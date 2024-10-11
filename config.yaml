@@ -1,9 +1,5 @@
 handles:
   - "4627488"
-  - atomFirst
-  - Niolle_Semis
-  - Kareninahui
-  - c10uds
-  - DGME
-  - sgdd
-  - hht2005
+  - "AtomFirst"
+unofficial:
+  - "c10uds"

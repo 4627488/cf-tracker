@@ -79,4 +79,62 @@
     background-color: #196127;
 }
 
-/* 超过5次提交 */
+/* 深色模式样式 */
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #333;
+        color: #fff;
+    }
+
+    #heatmap-container {
+        background-color: #333;
+    }
+
+    .cell {
+        color: #fff;
+    }
+
+    .cell-0 {
+        background-color: #2d2d2d;
+    }
+
+    .cell-1 {
+        background-color: #4a7c59;
+    }
+
+    .cell-2 {
+        background-color: #3b6b50;
+    }
+
+    .cell-3 {
+        background-color: #3b6b50;
+    }
+
+    .cell-4 {
+        background-color: #1e4d2b;
+    }
+
+    .cell-5 {
+        background-color: #1e4d2b;
+    }
+
+    .cell-6 {
+        background-color: #133b1a;
+    }
+
+    .cell-7 {
+        background-color: #133b1a;
+    }
+
+    .cell-8 {
+        background-color: #133b1a;
+    }
+
+    .cell-9 {
+        background-color: #133b1a;
+    }
+
+    .cell-10 {
+        background-color: #133b1a;
+    }
+}
