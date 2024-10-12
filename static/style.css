@@ -124,6 +124,38 @@ h1 {
     #last-update {
         color: #aaaaaa;
     }
+
+    .cell {
+        color: #e0e0e0;
+    }
+
+    .cell-0 {
+        background-color: #333;
+    }
+
+    .cell-1 {
+        background-color: #4caf50;
+    }
+
+    .cell-2 {
+        background-color: #388e3c;
+    }
+
+    .cell-3 {
+        background-color: #2e7d32;
+    }
+
+    .cell-4 {
+        background-color: #1b5e20;
+    }
+
+    .cell-5 {
+        background-color: #003300;
+    }
+
+    .cell-6 {
+        background-color: #002200;
+    }
 }
 
 /* styles.css */

@@ -25,7 +25,7 @@ fetch('/api/user-data')
                 .style('margin-right', '10px');
             // 添加总分数
             row.append('div')
-                .html(`<span style="font-weight: bold;">∑${user.total}</span>`)
+                .html(`<span style="font-weight: bold;">∑=${user.total}</span>`)
                 .style('margin-right', '10px');
 
             // 创建热力图容器
@@ -45,6 +45,9 @@ fetch('/api/user-data')
                 // 添加点击事件监听器
                 cell.on('click', () => showPopup(formattedDate, problems));
             });
+
+            // 插入分割线
+            container.append('hr').style('margin', '20px 0');
         });
 
         // 显示上次更新时间
