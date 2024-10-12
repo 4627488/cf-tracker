@@ -61,24 +61,38 @@ def process_data(handles):
     user_info = fetch_user_info(handles)
     if user_info and user_info['status'] == 'OK':
         user_info_dict = {user['handle']: user for user in user_info['result']}
-        print(user_info_dict)
+        # print(user_info_dict)
         for handle in user_info_dict.keys():
             user_data = fetch_codeforces_data(handle)
             if user_data and user_data['status'] == 'OK':
                 submissions = user_data['result']
-                days = [0] * 30
+                days = [[] for _ in range(30)]  # 创建30个独立的空列表
                 now = datetime.now(pytz.timezone(
                     'Asia/Shanghai'))  # 当前时间转换为CST
                 # 更改now为今天的23:59:59
                 now = now.replace(hour=23, minute=59, second=59, microsecond=0)
+
+                # 创建一个集合来存储唯一的题号
+                unique_problems = set()
+
                 for submission in submissions:
                     if submission['verdict'] != 'OK':
                         continue
+                    problem_id = submission['problem']['contestId'], submission['problem']['index']
+                    print(problem_id)
+                    if problem_id in unique_problems:
+                        continue
+                    unique_problems.add(problem_id)
+
                     submission_time = datetime.fromtimestamp(
                         # 提交时间转换为CST
                         submission['creationTimeSeconds'], pytz.timezone('Asia/Shanghai'))
                     if (now - submission_time).days < 30:
-                        days[(now - submission_time).days] += 1
+                        days[(now - submission_time).days].append({
+                            'problem': submission['problem']['name'],
+                            'contestId': submission['problem']['contestId'],
+                            'index': submission['problem']['index'],
+                        })
                 user_rank = user_info_dict[handle]['rank']
                 user_color = rank_colors[user_rank.lower()]
                 print(user_color)
@@ -88,14 +102,16 @@ def process_data(handles):
                     "color": user_color,  # 使用用户的颜色
                     "days": days,
                     "lastUpdate": datetime.now().isoformat(),
-                    "avatar": user_info_dict[handle]['titlePhoto']
+                    "avatar": user_info_dict[handle]['titlePhoto'],
+                    "total": sum([len(day) for day in days])
                 })
-    # 按 days 之和排序
-    data.sort(key=lambda x: sum(x['days']), reverse=True)
+    # 按 total 降序排序
+    data.sort(key=lambda x: x['total'], reverse=True)
     # 为unofficial用户添加颜色
     for i in range(len(data)):
         if data[i]['user'] in unofficial:
             data[i]['user'] += ' ⭐'
+    print(data)
     return data
 
 
@@ -111,7 +127,7 @@ def update_user_data():
             print("Data updated at", datetime.now())
         except Exception as e:
             print("Error updating data:", e)
-        time.sleep(60*10)  # 每隔1分钟更新一次
+        time.sleep(60*20)  # 每隔20分钟更新一次数据
 
 
 @app.route('/api/user-data', methods=['GET'])
