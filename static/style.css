@@ -1,23 +1,48 @@
-#heatmap-container {
-    width: fit-content;
-    /* 使容器宽度适应内容 */
-    margin-left: 0;
-    /* 靠左对齐 */
+/* 默认浅色模式 */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f0f0f0;
+    color: #333;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }
 
-.heatmap {
-    display: grid;
-    grid-template-columns: repeat(30, 20px);
-    /* 固定每个单元格的宽度 */
-    gap: 2px;
-    margin-bottom: 10px;
+.container {
+    text-align: center;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    display: inline-block;
+    /* 自动调整宽度 */
+}
+
+h1 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+
+#heatmap-container {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.heatmap-row img {
+    width: 40px;
+    height: 40px;
 }
 
 .cell {
     width: 20px;
-    /* 固定单元格宽度 */
     height: 20px;
-    /* 固定单元格高度 */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -26,115 +51,79 @@
 }
 
 .cell-0 {
-    background-color: #ebedf0;
+    background-color: #e0e0e0;
 }
 
-/* 无提交 */
 .cell-1 {
-    background-color: #c6e48b;
+    background-color: #d6e685;
 }
 
-/* 1次提交 */
 .cell-2 {
-    background-color: #7bc96f;
+    background-color: #8cc665;
 }
 
-/* 2-3次提交 */
 .cell-3 {
-    background-color: #7bc96f;
+    background-color: #44a340;
 }
 
-/* 2-3次提交 */
 .cell-4 {
-    background-color: #239a3b;
+    background-color: #1e6823;
 }
 
-/* 4-5次提交 */
 .cell-5 {
-    background-color: #239a3b;
+    background-color: #004d00;
 }
 
-/* 4-5次提交 */
 .cell-6 {
-    background-color: #196127;
+    background-color: #003300;
 }
 
-/* 超过5次提交 */
 .cell-7 {
-    background-color: #196127;
+    background-color: #002200;
 }
 
-/* 超过5次提交 */
 .cell-8 {
-    background-color: #196127;
+    background-color: #001100;
 }
 
-/* 超过5次提交 */
 .cell-9 {
-    background-color: #196127;
+    background-color: #000800;
 }
 
-/* 超过5次提交 */
 .cell-10 {
-    background-color: #196127;
+    background-color: #000000;
 }
 
-/* 深色模式样式 */
+#last-update {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #555;
+    text-align: center;
+}
+
+/* 深色模式 */
 @media (prefers-color-scheme: dark) {
     body {
-        background-color: #000;
-        color: #fff;
+        background-color: #121212;
+        color: #e0e0e0;
+    }
+
+    .container {
+        background-color: #1e1e1e;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    h1 {
+        color: #ffffff;
     }
 
     #heatmap-container {
-        background-color: #000;
+        background-color: #1e1e1e;
+        border: 1px solid #333;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
     }
 
-    .cell {
-        color: #fff;
-    }
-
-    .cell-0 {
-        background-color: #2d2d2d;
-    }
-
-    .cell-1 {
-        background-color: #4a7c59;
-    }
-
-    .cell-2 {
-        background-color: #3b6b50;
-    }
-
-    .cell-3 {
-        background-color: #3b6b50;
-    }
-
-    .cell-4 {
-        background-color: #1e4d2b;
-    }
-
-    .cell-5 {
-        background-color: #1e4d2b;
-    }
-
-    .cell-6 {
-        background-color: #133b1a;
-    }
-
-    .cell-7 {
-        background-color: #133b1a;
-    }
-
-    .cell-8 {
-        background-color: #133b1a;
-    }
-
-    .cell-9 {
-        background-color: #133b1a;
-    }
-
-    .cell-10 {
-        background-color: #133b1a;
+    #last-update {
+        color: #aaaaaa;
     }
 }

@@ -87,7 +87,8 @@ def process_data(handles):
                     "user": handle,
                     "color": user_color,  # 使用用户的颜色
                     "days": days,
-                    "lastUpdate": datetime.now().isoformat()
+                    "lastUpdate": datetime.now().isoformat(),
+                    "avatar": user_info_dict[handle]['titlePhoto']
                 })
     # 按 days 之和排序
     data.sort(key=lambda x: sum(x['days']), reverse=True)

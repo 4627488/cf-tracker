@@ -4,11 +4,14 @@
     <meta charset="UTF-8">
     <title>Cafebabe's Codeforces Board</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h1>Cafebabe's Codeforces Board 🥳</h1>
-    <div id="heatmap-container"></div>
-    <div id="last-update"></div> <!-- 添加显示更新时间的div -->
+    <div class="container">
+        <h1>Cafebabe's Codeforces Board 🥳</h1>
+        <div id="heatmap-container"></div>
+        <div id="last-update"></div> <!-- 添加显示更新时间的div -->
+    </div>
 
     <script src="https://d3js.org/d3.v6.min.js"></script>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
