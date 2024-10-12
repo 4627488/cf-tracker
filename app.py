@@ -40,7 +40,11 @@ def load_handles_from_yaml(file_path):
 
 
 def fetch_codeforces_data(handle):
-    response = requests.get(CODEFORCES_API_URL.format(handle))
+    # encode url
+    url = CODEFORCES_API_URL.format(handle)
+    # encode to URL
+    url = requests.utils.quote(url, safe='/:?=&')
+    response = requests.get(url)
     if response.status_code == 200:
         return response.json()
     else:
@@ -80,56 +84,52 @@ def process_data(handles):
     print(user_info_dict)
     for handle in user_info_dict.keys():
         user_data = fetch_codeforces_data(handle)
-        if user_data and user_data['status'] == 'OK':
-            submissions = user_data['result']
-            days = [[] for _ in range(30)]  # 创建30个独立的空列表
-            now = datetime.now(pytz.timezone(
-                'Asia/Shanghai'))  # 当前时间转换为CST
-            # 更改now为今天的23:59:59
-            now = now.replace(hour=23, minute=59, second=59, microsecond=0)
+        if user_data is None or user_data['status'] != 'OK':
+            continue
+        submissions = user_data['result']
+        days = [[] for _ in range(30)]  # 创建30个独立的空列表
+        now = datetime.now(pytz.timezone(
+            'Asia/Shanghai'))  # 当前时间转换为CST
+        # 更改now为今天的23:59:59
+        now = now.replace(hour=23, minute=59, second=59, microsecond=0)
 
-            # 创建一个集合来存储唯一的题号
-            unique_problems = set()
+        # 创建一个集合来存储唯一的题号
+        unique_problems = set()
+        for submission in submissions:
+            if submission['verdict'] != 'OK':
+                continue
+            problem_id = submission['problem']['contestId'], submission['problem']['index']
+            # print(problem_id)
+            if problem_id in unique_problems:
+                continue
+            unique_problems.add(problem_id)
 
-            for submission in submissions:
-                if submission['verdict'] != 'OK':
-                    continue
-                problem_id = submission['problem']['contestId'], submission['problem']['index']
-                # print(problem_id)
-                if problem_id in unique_problems:
-                    continue
-                unique_problems.add(problem_id)
-
-                submission_time = datetime.fromtimestamp(
-                    # 提交时间转换为CST
-                    submission['creationTimeSeconds'], pytz.timezone('Asia/Shanghai'))
-                if (now - submission_time).days < 30:
-                    days[(now - submission_time).days].append({
-                        'problem': submission['problem']['name'],
-                        'contestId': submission['problem']['contestId'],
-                        'index': submission['problem']['index'],
-                    })
-            if user_info_dict[handle].get('rank') is None:
-                user_rank = 'newbie'
-            else:
-                user_rank = user_info_dict[handle]['rank']
-            user_color = rank_colors[user_rank.lower()]
-            print(user_color)
-
-            data.append({
-                "user": handle,
-                "color": user_color,  # 使用用户的颜色
-                "days": days,
-                "lastUpdate": datetime.now().isoformat(),
-                "avatar": user_info_dict[handle]['titlePhoto'],
-                "total": sum([len(day) for day in days])
-            })
+            submission_time = datetime.fromtimestamp(
+                # 提交时间转换为CST
+                submission['creationTimeSeconds'], pytz.timezone('Asia/Shanghai'))
+            if (now - submission_time).days < 30:
+                days[(now - submission_time).days].append({
+                    'problem': submission['problem']['name'],
+                    'contestId': submission['problem']['contestId'],
+                    'index': submission['problem']['index'],
+                })
+        if user_info_dict[handle].get('rank') is None:
+            user_rank = 'newbie'
+        else:
+            user_rank = user_info_dict[handle]['rank']
+        user_color = rank_colors[user_rank.lower()]
+        print(user_color)
+        data.append({
+            "user": handle,
+            "isUnofficial": handle in unofficial,
+            "color": user_color,  # 使用用户的颜色
+            "days": days,
+            "lastUpdate": datetime.now().isoformat(),
+            "avatar": user_info_dict[handle]['titlePhoto'],
+            "total": sum([len(day) for day in days]),  # 总题数
+        })
     # 按 total 降序排序
     data.sort(key=lambda x: x['total'], reverse=True)
-    # 为unofficial用户添加颜色
-    for i in range(len(data)):
-        if data[i]['user'] in unofficial:
-            data[i]['user'] += ' ⭐'
     print(data)
     return data
 

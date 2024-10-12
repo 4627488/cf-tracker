@@ -84,27 +84,19 @@ h1 {
     background-color: #003300;
 }
 
-.cell-7 {
-    background-color: #002200;
-}
-
-.cell-8 {
-    background-color: #001100;
-}
-
-.cell-9 {
-    background-color: #000800;
-}
-
-.cell-10 {
-    background-color: #000000;
-}
-
 #last-update {
     margin-top: 20px;
     font-size: 14px;
     color: #555;
     text-align: center;
+}
+
+.rank {
+    display: inline-block;
+    width: 50px;
+    /* 根据需要调整宽度 */
+    text-align: right;
+    /* 根据需要调整对齐方式 */
 }
 
 /* 深色模式 */
