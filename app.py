@@ -65,7 +65,7 @@ def process_data(handles):
     data = []
    # user_info = fetch_user_info(handles)
     user_info_dict = {}
-    batch_size = 10
+    batch_size = 30
     for i in range(0, len(handles), batch_size):
         batch_handles = handles[i:i + batch_size]
         user_info_batch = fetch_user_info(batch_handles)
