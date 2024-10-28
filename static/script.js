@@ -36,7 +36,7 @@ fetch('/api/user-data')
                 const date = new Date();
                 date.setDate(date.getDate() - index); // 计算对应的日期
                 const formattedDate = date.toISOString().split('T')[0]; // 格式化日期为 YYYY-MM-DD
-                const problems = day.map(d => `<a href="https://codeforces.com/contest/${d.contestId}/problem/${d.index}" target="_blank" style="text-decoration: none;">${d.contestId}${d.index} ${d.problem}</a>`).join('<br>'); // 显示当天做的题目并添加链接
+                const problems = day.map(d => `<a href="https://codeforces.com/${Number(d.contestId)>100000?'gym':'contest'}/${d.contestId}/problem/${d.index}" target="_blank" style="text-decoration: none;">${d.contestId}${d.index} ${d.problem}</a>`).join('<br>'); // 显示当天做的题目并添加链接
 
                 const cell = heatmapContainer.append('div')
                     .attr('class', `cell ${cellClass}`)
