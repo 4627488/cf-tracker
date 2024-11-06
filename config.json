@@ -77,6 +77,12 @@
         },
         "Kareninahui": {
             "group": "unofficial"
+        },
+        "_lets_use_deque_": {
+            "group": "official"
+        },
+        "Coeldesu": {
+            "group": "official"
         }
     }
 }
