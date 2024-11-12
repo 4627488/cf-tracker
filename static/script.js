@@ -18,7 +18,7 @@ fetch('/api/user-data')
 
             // 添加头像
             row.append('div')
-                .html(`<img src="${user.avatar}" alt="${user.user} avatar" style="width: 40px; height: 40px; margin-right: 10px; border-radius: 5px;">`);
+                .html(`<img src="${user.avatar}" alt="${user.user} avatar" style="width: 40px; height: auto; margin-right: 10px; border-radius: 5px;">`);
             // 添加用户名
             row.append('div')
                 .html(`<a href="https://codeforces.com/profile/${user.user}" target="_blank" style="color: ${user.color}; font-weight: bold; text-decoration: none;" title="Last update: ${formattedLastUpdate}">${user.user}${user.group != 'official' ? '🌟' : ''}</a>`)
