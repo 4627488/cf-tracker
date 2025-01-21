@@ -16,7 +16,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted, computed, watch } from "vue";
+import { defineComponent, ref, onMounted, watch } from "vue";
 import UserCard from "./UserCard.vue";
 import { VContainer } from "vuetify/components";
 
