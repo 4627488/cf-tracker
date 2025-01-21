@@ -1,35 +1,44 @@
 <template>
-  <v-col cols="12" lg="6" class="user-card">
-    <v-card :append-avatar="user.avatar" class="mx-auto" :prepend-avatar="user.avatar" :subtitle="user.group"
-      :title="user.user">
-      <v-container class="heatmap-container" :id="'heatmap-container-' + user.user"></v-container>
-    </v-card>
-  </v-col>
+  <v-list-item class="mx-auto user-card" :prepend-avatar="user.avatar" :subtitle="user.group">
+    <template v-slot:title>
+      <a :href="`https://codeforces.com/profile/${user.user}`" target="_blank"
+        :style="{ color: user.color, fontWeight: 'bold', textDecoration: 'none' }">{{ user.user }}</a>
+      <span> ({{ user.total }})</span>
+    </template>
+    <template v-slot:subtitle>
+      <v-container class="heatmap-container" :id="'heatmap-container-' + user.user">
+        <v-row>
+          <v-sheet v-for="(day, index) in user.days" :key="index" class="heatmap-row">
+            <v-tooltip location="top"> <template v-slot:activator="{ props }">
+                <div class="cell" :class="'cell-' + Math.min(day.length, 6)" @click="showPopup(day)" v-bind="props">
+                  {{ day.length }}
+                </div>
+              </template>
+              <span>{{ calculateDate(index) }}</span>
+            </v-tooltip>
+          </v-sheet>
+        </v-row>
+      </v-container>
+    </template>
+  </v-list-item>
 
   <v-dialog v-model="dialog" max-width="500">
-    <v-card>
-      <v-card-title>{{ dialogDate }}</v-card-title>
-      <v-card-text>
-        <v-list>
-          <v-list-item v-for="problem in dialogProblems" :key="problem.link">
-            <v-list-item-content>
-              <v-list-item-title>
-                <a :href="problem.link" target="_blank">{{ problem.problem }}</a>
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-      </v-card-text>
-      <v-card-actions>
-        <v-btn color="primary" @click="closePopup">关闭</v-btn>
-      </v-card-actions>
-    </v-card>
+    <v-card-title>{{ dialogDate }}</v-card-title>
+    <v-card-text>
+      <v-list>
+        <v-list-item v-for="problem in dialogProblems" :key="problem.link">
+          <v-list-item-title>
+            <a :href="problem.link" target="_blank">{{ problem.problem }}</a>
+          </v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-card-text>
   </v-dialog>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted } from "vue";
-import * as d3 from "d3";
+import { defineComponent, ref } from "vue";
+import { VListItem, VListItemTitle } from 'vuetify/components';
 
 interface User {
   user: string;
@@ -49,52 +58,30 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props) {
+  setup() {
     const dialog = ref(false);
     const dialogDate = ref("");
     const dialogProblems = ref(Array<{ link: string, problem: string }>());
 
-    onMounted(() => {
-      createHeatmap(props.user);
-    });
-
-    const createHeatmap = (user: User) => {
-      const container = d3.select(`#heatmap-container-${user.user}`);
-      if (!container) console.error("Container not found");
-      const heatmapContainer = container
-        .append("div")
-        .attr("class", "heatmap-row")
-        .style("display", "flex")
-        .style("align-items", "center")
-        .style("margin-bottom", "10px");
-
-      user.days.forEach((day, index) => {
-        const cellClass = `cell-${Math.min(day.length, 6)}`;
-        const date = new Date();
-        date.setDate(date.getDate() - index);
-        const formattedDate = date.toISOString().split("T")[0];
-        const problems = day.map((d) => ({
+    const showPopup = (day: { contestId: number; index: string; problem: string }[]) => {
+      if (day.length > 0) {
+        dialogProblems.value = day.map((d) => ({
           link: `https://codeforces.com/${Number(d.contestId) > 100000 ? "gym" : "contest"}/${d.contestId}/problem/${d.index}`,
           problem: `${d.contestId}${d.index} ${d.problem}`,
         }));
-
-        const cell = heatmapContainer
-          .append("div")
-          .attr("class", `cell ${cellClass}`)
-          .text(day.length);
-
-        cell.on("click", () => showPopup(formattedDate, problems));
-      });
-    };
-
-    const showPopup = (date: string, problems: Array<{ link: string, problem: string }>) => {
-      dialogDate.value = date;
-      dialogProblems.value = problems;
-      dialog.value = true;
+        dialog.value = true;
+      }
     };
 
     const closePopup = () => {
       dialog.value = false;
+    };
+
+    const calculateDate = (index: number) => {
+      const date = new Date();
+      index = 30 - index - 1;
+      date.setDate(date.getDate() - index);
+      return date.toDateString().slice(4, 10);
     };
 
     return {
@@ -103,16 +90,13 @@ export default defineComponent({
       dialogProblems,
       showPopup,
       closePopup,
+      calculateDate,
     };
   },
 });
 </script>
 
 <style>
-.user-card {
-  margin-bottom: 20px;
-}
-
 .heatmap-container {
   display: flex;
   flex-wrap: wrap;

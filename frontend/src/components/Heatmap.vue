@@ -1,6 +1,12 @@
 <template>
-  <v-col no-gutters>
-    <UserCard v-for="user in users" :key="user.user" :user="user" />
+  <v-col>
+    <v-list>
+      <UserCard v-for="user in users" :key="user.user" :user="user" />
+    </v-list>
+    <v-container>
+      <span>Last update: {{ new Date(lastUpdate).toLocaleString() }}
+      </span>
+    </v-container>
   </v-col>
 </template>
 
@@ -27,13 +33,13 @@ export default defineComponent({
   },
   setup() {
     const users = ref<User[]>([]);
-
+    const lastUpdate = ref("");
     const fetchData = async () => {
       try {
         const response = await fetch("/api/user-data");
         const responseData = await response.json();
-        const { lastUpdate, data } = responseData;
-
+        const { lastUpdate: update, data } = responseData;
+        lastUpdate.value = update;
         users.value = data;
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -44,7 +50,21 @@ export default defineComponent({
 
     return {
       users,
+      lastUpdate,
     };
   },
 });
 </script>
+
+<style scoped>
+.user-card-container {
+  display: flex;
+  align-items: center;
+}
+
+.user-card-container span {
+  margin-right: 10px;
+  font-size: 16px;
+  /* 增加字体大小 */
+}
+</style>
