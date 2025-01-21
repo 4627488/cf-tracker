@@ -1,13 +1,17 @@
 <template>
-  <v-col>
-    <v-list>
-      <UserCard v-for="(user) in users" :key="user.user" :user="user" />
-    </v-list>
-    <v-container>
-      <span>Last update: {{ new Date(lastUpdate).toLocaleString() }}
-      </span>
-    </v-container>
-  </v-col>
+  <div class="heatmap-container">
+    <v-overlay :model-value="overlay" class="align-center justify-center">
+      <v-progress-circular color="primary" size="64" indeterminate></v-progress-circular>
+    </v-overlay>
+    <v-col v-if="!overlay">
+      <v-list>
+        <UserCard v-for="(user, index) in users" :key="user.user" :user="user" :index="index" />
+      </v-list>
+      <v-container>
+        <span>Last update: {{ new Date(lastUpdate).toLocaleString() }}</span>
+      </v-container>
+    </v-col>
+  </div>
 </template>
 
 <script lang="ts">
@@ -34,21 +38,29 @@ export default defineComponent({
   setup() {
     const users = ref<User[]>([]);
     const lastUpdate = ref("");
+    const overlay = ref(true);
+
     const fetchData = async () => {
       try {
         const response = await fetch("/api/user-data");
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
         const responseData = await response.json();
         const { lastUpdate: update, data } = responseData;
         lastUpdate.value = update;
         users.value = data;
       } catch (error) {
         console.error("Error fetching data:", error);
+      } finally {
+        overlay.value = false;
       }
     };
 
     onMounted(fetchData);
 
     return {
+      overlay,
       users,
       lastUpdate,
     };
@@ -57,6 +69,20 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.heatmap-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+v-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
 .user-card-container {
   display: flex;
   align-items: center;
@@ -64,9 +90,6 @@ export default defineComponent({
 
 .user-card-container span {
   margin-right: 0.625rem;
-  /* 10px */
   font-size: 1rem;
-  /* 16px */
-  /* 增加字体大小 */
 }
 </style>

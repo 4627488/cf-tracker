@@ -1,28 +1,28 @@
 <template>
-  <v-list-item class="mx-auto user-card" :prepend-avatar="user.avatar">
+  <v-list-item class="mx-auto user-card" :prepend-avatar="user.avatar"
+    style="border: 1px solid #ccc; border-radius: 8px; max-width: fit-content; margin: 1rem 0;">
     <template v-slot:title>
-      <div style="display: flex; align-items: center;">
+      <div class="d-flex">
+        <span :style="{ fontWeight: 'bold', fontSize: '1.25rem', marginRight: '0.5rem' }">{{ index + 1 }}.</span>
         <a :href="`https://codeforces.com/profile/${user.user}`" target="_blank"
           :style="{ color: user.color, fontWeight: 'bold', textDecoration: 'none', fontSize: '1.25rem', marginRight: '0.5rem' }">{{
             user.user }}</a>
-        <v-chip color="primary" class="white--text" style="font-size: 1rem;">{{ user.total }}</v-chip>
+        <v-chip color="primary">{{ user.total }}</v-chip>
       </div>
     </template>
 
     <template v-slot:subtitle>
-      <v-container class="heatmap-container" :id="'heatmap-container-' + user.user">
-        <v-row>
-          <v-sheet v-for="(day, index) in user.days" :key="index" class="heatmap-row">
-            <v-tooltip location="top"> <template v-slot:activator="{ props }">
-                <div class="cell" :class="'cell-' + Math.min(day.length, 6)" @click="showPopup(day)" v-bind="props">
-                  {{ day.length }}
-                </div>
-              </template>
-              <span>{{ calculateDate(index) }}</span>
-            </v-tooltip>
-          </v-sheet>
-        </v-row>
-      </v-container>
+      <div style="display: flex; align-items: center; flex-wrap: wrap;">
+        <v-sheet v-for="(day, index) in user.days" :key="index" class="heatmap-row">
+          <v-tooltip location="top"> <template v-slot:activator="{ props }">
+              <div class="cell" :class="'cell-' + Math.min(day.length, 6)" @click="showPopup(day)" v-bind="props">
+                {{ day.length }}
+              </div>
+            </template>
+            <span>{{ calculateDate(index) }}</span>
+          </v-tooltip>
+        </v-sheet>
+      </div>
     </template>
   </v-list-item>
 
@@ -59,6 +59,10 @@ export default defineComponent({
   props: {
     user: {
       type: Object as () => User,
+      required: true,
+    },
+    index: {
+      type: Number,
       required: true,
     },
   },
@@ -104,13 +108,7 @@ export default defineComponent({
 .heatmap-container {
   display: flex;
   flex-wrap: wrap;
-}
-
-.heatmap-row {
-  display: flex;
-  align-items: center;
-  margin-bottom: 0.625rem;
-  /* 10px */
+  justify-content: flex-start;
 }
 
 .cell {
@@ -161,14 +159,6 @@ export default defineComponent({
 
 .user-card .v-list-item__title {
   font-size: 1.25rem;
-}
-
-/* 新增样式 */
-@media (max-width: 600px) {
-  .user-card .v-list-item__subtitle {
-    display: block;
-    margin-top: 0.5rem;
-  }
 }
 
 /* 深色模式 */

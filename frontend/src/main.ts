@@ -6,6 +6,9 @@ import App from "./App.vue";
 import "vuetify/dist/vuetify.css";
 import { createVuetify } from "vuetify";
 
+// 引入 mdi 图标
+import "@mdi/font/css/materialdesignicons.css";
+
 import { md3 } from "vuetify/blueprints";
 
 const prefersDarkScheme = window.matchMedia(
