@@ -7,7 +7,8 @@
         <a :href="`https://codeforces.com/profile/${user.user}`" target="_blank"
           :style="{ color: user.color, fontWeight: 'bold', textDecoration: 'none', fontSize: '1.25rem', marginRight: '0.5rem' }">{{
             user.user }}</a>
-        <v-chip color="primary">{{ user.total }}</v-chip>
+        <v-spacer></v-spacer>
+        Σ={{ user.total }}
       </div>
     </template>
 
