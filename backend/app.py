@@ -249,11 +249,6 @@ def get_user_data():
         return jsonify({"error": str(e)}), 500
 
 
-@ app.route('/')
-def index():
-    return render_template('index.html')
-
-
 if __name__ == '__main__':
     # 加载配置
     config = load_config_from_json('config.json')
@@ -262,4 +257,4 @@ if __name__ == '__main__':
     update_thread.daemon = True
     update_thread.start()
 
-    app.run(debug=False, port=5000)
+    app.run(debug=False, host='::', port=5000)
