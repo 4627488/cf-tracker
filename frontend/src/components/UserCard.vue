@@ -46,7 +46,6 @@
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
-import { VListItem, VListItemTitle } from 'vuetify/components';
 
 interface User {
   user: string;
