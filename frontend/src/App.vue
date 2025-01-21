@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watchEffect } from "vue";
 import Heatmap from "./components/Heatmap.vue";
+import Setting from "./components/Setting.vue";
 document.title = "Codeforce Daily Tracker";
 
 const drawer = ref(true);
@@ -24,23 +25,22 @@ watchEffect(() => {
       </v-btn>
     </v-app-bar>
 
-
     <v-main class="d-flex align-center justify-center" style="min-height: 300px;">
-      <Heatmap />
+      <component :is="$route.name === 'settings' ? Setting : Heatmap" />
     </v-main>
 
     <v-footer app>
       <v-row justify="center" no-gutters>
         <v-col class="text-center mt-4" cols="12">
           {{ new Date().getFullYear() }} - <strong>Caizi Jiangnan</strong> | Powered by <strong>Vuetify</strong>
-
         </v-col>
       </v-row>
     </v-footer>
 
     <v-navigation-drawer v-model="drawer" app>
       <v-list>
-        <v-list-item title="Ranklist" to="/"></v-list-item>
+        <v-list-item title="Ranklist" @click="$router.push('/')"></v-list-item>
+        <v-list-item title="Settings" @click="$router.push('/settings')"></v-list-item>
       </v-list>
     </v-navigation-drawer>
   </v-app>

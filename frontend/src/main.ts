@@ -11,6 +11,11 @@ import "@mdi/font/css/materialdesignicons.css";
 
 import { md3 } from "vuetify/blueprints";
 
+// 引入 Vue Router
+import { createRouter, createWebHistory } from "vue-router";
+import Heatmap from "./components/Heatmap.vue";
+import Setting from "./components/Setting.vue";
+
 const prefersDarkScheme = window.matchMedia(
   "(prefers-color-scheme: dark)",
 ).matches;
@@ -48,6 +53,17 @@ const vuetify = createVuetify({
   },
 });
 
+const routes = [
+  { path: "/", component: Heatmap, name: "home" },
+  { path: "/settings", component: Setting, name: "settings" },
+];
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes,
+});
+
 createApp(App)
   .use(vuetify) // 使用 Vuetify
+  .use(router) // 使用 Vue Router
   .mount("#app");

@@ -1,33 +1,24 @@
 <template>
   <div class="heatmap-container">
-    <v-overlay :model-value="overlay" class="align-center justify-center">
+    <v-overlay :model-value="overlay" class="align-center justify-center" contained>
       <v-progress-circular color="primary" size="64" indeterminate></v-progress-circular>
     </v-overlay>
     <v-col v-if="!overlay">
       <v-list>
-        <UserCard v-for="(user, index) in users" :key="user.user" :user="user" :index="index" />
+        <UserCard v-for="(handle, index) in handles" :key="handle" :handle="handle" :index="index"
+          @user-data="updateUserData" />
       </v-list>
       <v-container>
-        <span>Last update: {{ new Date(lastUpdate).toLocaleString() }}</span>
+        {{ handles.length }} users, last update: {{ new Date(lastUpdate).toLocaleString() }}
       </v-container>
     </v-col>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted } from "vue";
+import { defineComponent, ref, onMounted, computed, watch } from "vue";
 import UserCard from "./UserCard.vue";
 import { VContainer } from "vuetify/components";
-
-interface User {
-  user: string;
-  avatar: string;
-  color: string;
-  group: string;
-  total: number;
-  lastUpdate: string;
-  days: Array<Array<{ contestId: number; index: string; problem: string }>>;
-}
 
 export default defineComponent({
   name: "Heatmap",
@@ -36,20 +27,31 @@ export default defineComponent({
     VContainer,
   },
   setup() {
-    const users = ref<User[]>([]);
+    const handles = ref<string[]>(JSON.parse(localStorage.getItem("handles") || "[]"));
     const lastUpdate = ref("");
     const overlay = ref(true);
+    const usersStars = ref<{ [key: string]: { total: number } }>({});
+
+    const sortHandles = () => {
+      handles.value = handles.value.slice().sort((a, b) => {
+        const userA = usersStars.value[a];
+        const userB = usersStars.value[b];
+        console.log(userA, userB);
+        // 从大到小排序
+        return (userB?.total || 0) - (userA?.total || 0);
+      });
+    };
+
+    watch(usersStars, sortHandles, { deep: true });
+
+    const updateUserData = (handle: string, data: { total: number }) => {
+      console.log(`Updating data for handle: ${handle}`, data);
+      usersStars.value[handle] = data;
+    };
 
     const fetchData = async () => {
       try {
-        const response = await fetch("/api/user-data");
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const responseData = await response.json();
-        const { lastUpdate: update, data } = responseData;
-        lastUpdate.value = update;
-        users.value = data;
+        lastUpdate.value = new Date().toISOString();
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -61,8 +63,9 @@ export default defineComponent({
 
     return {
       overlay,
-      users,
+      handles,
       lastUpdate,
+      updateUserData,
     };
   },
 });
