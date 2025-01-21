@@ -1,10 +1,14 @@
 <template>
-  <v-list-item class="mx-auto user-card" :prepend-avatar="user.avatar" :subtitle="user.group">
+  <v-list-item class="mx-auto user-card" :prepend-avatar="user.avatar">
     <template v-slot:title>
-      <a :href="`https://codeforces.com/profile/${user.user}`" target="_blank"
-        :style="{ color: user.color, fontWeight: 'bold', textDecoration: 'none' }">{{ user.user }}</a>
-      <span> ({{ user.total }})</span>
+      <div style="display: flex; align-items: center;">
+        <a :href="`https://codeforces.com/profile/${user.user}`" target="_blank"
+          :style="{ color: user.color, fontWeight: 'bold', textDecoration: 'none', fontSize: '1.25rem', marginRight: '0.5rem' }">{{
+            user.user }}</a>
+        <v-chip color="primary" class="white--text" style="font-size: 1rem;">{{ user.total }}</v-chip>
+      </div>
     </template>
+
     <template v-slot:subtitle>
       <v-container class="heatmap-container" :id="'heatmap-container-' + user.user">
         <v-row>
@@ -105,15 +109,20 @@ export default defineComponent({
 .heatmap-row {
   display: flex;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 0.625rem;
+  /* 10px */
 }
 
 .cell {
-  width: 20px;
-  height: 20px;
-  margin-right: 2px;
+  width: 1.5rem;
+  /* 20px */
+  height: 1.5rem;
+  /* 20px */
+  margin-right: 0.125rem;
+  /* 2px */
   text-align: center;
-  line-height: 20px;
+  line-height: 1.5rem;
+  /* 20px */
   cursor: pointer;
 }
 
@@ -143,5 +152,73 @@ export default defineComponent({
 
 .cell-6 {
   background-color: #003300;
+}
+
+.user-card .v-list-item__avatar {
+  width: 2rem;
+  height: 2rem;
+}
+
+.user-card .v-list-item__title {
+  font-size: 1.25rem;
+}
+
+/* 新增样式 */
+@media (max-width: 600px) {
+  .user-card .v-list-item__subtitle {
+    display: block;
+    margin-top: 0.5rem;
+  }
+}
+
+/* 深色模式 */
+@media (prefers-color-scheme: dark) {
+
+  .container {
+    background-color: #1e1e1e;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  }
+
+  #heatmap-container {
+    background-color: #1e1e1e;
+    border: 1px solid #333;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  }
+
+  #last-update {
+    color: #aaaaaa;
+  }
+
+  .cell {
+    color: #e0e0e0;
+  }
+
+  .cell-0 {
+    background-color: #333;
+  }
+
+  .cell-1 {
+    background-color: #4caf50;
+  }
+
+  .cell-2 {
+    background-color: #388e3c;
+  }
+
+  .cell-3 {
+    background-color: #2e7d32;
+  }
+
+  .cell-4 {
+    background-color: #1b5e20;
+  }
+
+  .cell-5 {
+    background-color: #003300;
+  }
+
+  .cell-6 {
+    background-color: #002200;
+  }
 }
 </style>

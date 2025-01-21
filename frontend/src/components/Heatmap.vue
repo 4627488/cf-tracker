@@ -1,7 +1,7 @@
 <template>
   <v-col>
     <v-list>
-      <UserCard v-for="user in users" :key="user.user" :user="user" />
+      <UserCard v-for="(user) in users" :key="user.user" :user="user" />
     </v-list>
     <v-container>
       <span>Last update: {{ new Date(lastUpdate).toLocaleString() }}
@@ -63,8 +63,10 @@ export default defineComponent({
 }
 
 .user-card-container span {
-  margin-right: 10px;
-  font-size: 16px;
+  margin-right: 0.625rem;
+  /* 10px */
+  font-size: 1rem;
+  /* 16px */
   /* 增加字体大小 */
 }
 </style>

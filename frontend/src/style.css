@@ -1,7 +1,4 @@
 body {
   font-family: "Helvetica Neue", Helvetica, Arial, "PingFang SC",
     "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
-  font-size: 16px; /* 增加字体大小 */
-  transform: scale(1.25); /* 整体放大100% */
-  transform-origin: top left; /* 设置放大原点 */
 }
