@@ -26,18 +26,21 @@
       </div>
     </template>
   </v-list-item>
-
-  <v-dialog v-model="dialog" max-width="500">
-    <v-card-title>{{ dialogDate }}</v-card-title>
-    <v-card-text>
-      <v-list>
-        <v-list-item v-for="problem in dialogProblems" :key="problem.link">
-          <v-list-item-title>
-            <a :href="problem.link" target="_blank">{{ problem.problem }}</a>
-          </v-list-item-title>
-        </v-list-item>
-      </v-list>
-    </v-card-text>
+  <v-dialog v-model="dialog" width="auto">
+    <v-card max-width="400" prepend-icon="mdi-update" title="Problems">
+      <v-card-text>
+        <v-list>
+          <v-list-item v-for="problem in dialogProblems" :key="problem.link">
+            <v-list-item-title>
+              <a :href="problem.link" target="_blank">{{ problem.problem }}</a>
+            </v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-card-text>
+      <template v-slot:actions>
+        <v-btn class="ms-auto" text="Ok" @click="dialog = false"></v-btn>
+      </template>
+    </v-card>
   </v-dialog>
 </template>
 
