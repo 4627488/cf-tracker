@@ -1,35 +1,24 @@
 <template>
-  <v-card class="user-card">
-    <v-row>
-      <v-col cols="4" class="d-flex align-items-center">
-        <v-avatar class="mr-3">
-          <img :src="user.avatar" :alt="`${user.user} avatar`" />
-        </v-avatar>
-        <div>
-          <a
-            :href="`https://codeforces.com/profile/${user.user}`"
-            target="_blank"
-            :style="{ color: user.color }"
-          >
-            {{ user.user }}<span v-if="user.group !== 'official'">🌟</span>
-          </a>
-          <div>∑={{ user.total }}</div>
-        </div>
-      </v-col>
-      <v-col cols="8">
-        <div
-          :id="`heatmap-container-${user.user}`"
-          class="heatmap-container"
-        ></div>
-      </v-col>
-    </v-row>
-  </v-card>
+  <v-col cols="12" lg="6" class="user-card">
+    <v-card :append-avatar="user.avatar" class="mx-auto" :prepend-avatar="user.avatar" :subtitle="user.group"
+      :title="user.user">
+      <v-container class="heatmap-container" :id="'heatmap-container-' + user.user"></v-container>
+    </v-card>
+  </v-col>
 
   <v-dialog v-model="dialog" max-width="500">
     <v-card>
       <v-card-title>{{ dialogDate }}</v-card-title>
       <v-card-text>
-        <pre>{{ dialogProblems }}</pre>
+        <v-list>
+          <v-list-item v-for="problem in dialogProblems" :key="problem.link">
+            <v-list-item-content>
+              <v-list-item-title>
+                <a :href="problem.link" target="_blank">{{ problem.problem }}</a>
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
       </v-card-text>
       <v-card-actions>
         <v-btn color="primary" @click="closePopup">关闭</v-btn>
@@ -63,7 +52,7 @@ export default defineComponent({
   setup(props) {
     const dialog = ref(false);
     const dialogDate = ref("");
-    const dialogProblems = ref("");
+    const dialogProblems = ref(Array<{ link: string, problem: string }>());
 
     onMounted(() => {
       createHeatmap(props.user);
@@ -71,6 +60,7 @@ export default defineComponent({
 
     const createHeatmap = (user: User) => {
       const container = d3.select(`#heatmap-container-${user.user}`);
+      if (!container) console.error("Container not found");
       const heatmapContainer = container
         .append("div")
         .attr("class", "heatmap-row")
@@ -83,12 +73,10 @@ export default defineComponent({
         const date = new Date();
         date.setDate(date.getDate() - index);
         const formattedDate = date.toISOString().split("T")[0];
-        const problems = day
-          .map(
-            (d) =>
-              `<a href="https://codeforces.com/${Number(d.contestId) > 100000 ? "gym" : "contest"}/${d.contestId}/problem/${d.index}" target="_blank" style="text-decoration: none;">${d.contestId}${d.index} ${d.problem}</a>`,
-          )
-          .join("<br>");
+        const problems = day.map((d) => ({
+          link: `https://codeforces.com/${Number(d.contestId) > 100000 ? "gym" : "contest"}/${d.contestId}/problem/${d.index}`,
+          problem: `${d.contestId}${d.index} ${d.problem}`,
+        }));
 
         const cell = heatmapContainer
           .append("div")
@@ -99,9 +87,9 @@ export default defineComponent({
       });
     };
 
-    const showPopup = (date: string, problems: string) => {
+    const showPopup = (date: string, problems: Array<{ link: string, problem: string }>) => {
       dialogDate.value = date;
-      dialogProblems.value = problems || "nothing";
+      dialogProblems.value = problems;
       dialog.value = true;
     };
 
@@ -120,7 +108,7 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
+<style>
 .user-card {
   margin-bottom: 20px;
 }
